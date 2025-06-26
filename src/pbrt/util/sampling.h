@@ -131,6 +131,7 @@ PBRT_CPU_GPU inline Float InvertLinearSample(Float x, Float a, Float b) {
     return x * (a * (2 - x) + b * x) / (a + b);
 }
 
+// p(x, y) = 4 * f(x, y) / (w00 + w10 + w01 + w11)
 PBRT_CPU_GPU inline Float BilinearPDF(Point2f p, pstd::span<const Float> w) {
     DCHECK_EQ(4, w.size());
     if (p.x < 0 || p.x > 1 || p.y < 0 || p.y > 1)

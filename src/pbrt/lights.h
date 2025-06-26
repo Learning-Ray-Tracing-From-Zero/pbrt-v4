@@ -49,9 +49,9 @@ struct LightLiSample {
     std::string ToString() const;
 
     SampledSpectrum L;
-    Vector3f wi;
+    Vector3f wi; // direction from light source sampling point to intersection point
     Float pdf;
-    Interaction pLight;
+    Interaction pLight; // light source sampling point
 };
 
 // LightLeSample Definition

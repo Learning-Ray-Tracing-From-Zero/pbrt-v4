@@ -50,14 +50,19 @@ class Shape
     PBRT_CPU_GPU inline pstd::optional<ShapeIntersection> Intersect(
         const Ray &ray, Float tMax = Infinity) const;
 
+    // Fast intersection test, used for detecting shadows
     PBRT_CPU_GPU inline bool IntersectP(const Ray &ray, Float tMax = Infinity) const;
 
     PBRT_CPU_GPU inline Float Area() const;
 
+    // u in [0, 1]^2
+    // Sampling on the shape surface relative to the probability density distribution of surface area
     PBRT_CPU_GPU inline pstd::optional<ShapeSample> Sample(Point2f u) const;
 
+    // hint: used by MIS
     PBRT_CPU_GPU inline Float PDF(const Interaction &) const;
 
+    // solid angle sample
     PBRT_CPU_GPU inline pstd::optional<ShapeSample> Sample(const ShapeSampleContext &ctx,
                                                            Point2f u) const;
 

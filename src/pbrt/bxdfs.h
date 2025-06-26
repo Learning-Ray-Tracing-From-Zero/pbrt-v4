@@ -78,6 +78,7 @@ class DiffuseBxDF {
     }
 
   private:
+    // reflection spectrum, the value in [0.0, 1.0]
     SampledSpectrum R;
 };
 
@@ -377,7 +378,8 @@ class ConductorBxDF {
   private:
     // ConductorBxDF Private Members
     TrowbridgeReitzDistribution mfDistrib;
-    SampledSpectrum eta, k;
+    SampledSpectrum eta; // real part
+    SampledSpectrum k; // imaginary part
 };
 
 // TopOrBottomBxDF Definition

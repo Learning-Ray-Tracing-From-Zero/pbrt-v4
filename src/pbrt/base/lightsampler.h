@@ -15,8 +15,8 @@ namespace pbrt {
 
 // SampledLight Definition
 struct SampledLight {
-    Light light;
-    Float p = 0;
+    Light light; // the sampled light source
+    Float p = 0; // different sampling strategies have different algorithms
     std::string ToString() const;
 };
 
@@ -25,6 +25,7 @@ class PowerLightSampler;
 class BVHLightSampler;
 class ExhaustiveLightSampler;
 
+// Light source sampler, specifically designed for multi light source scenes
 // LightSampler Definition
 class LightSampler : public TaggedPointer<UniformLightSampler, PowerLightSampler,
                                           ExhaustiveLightSampler, BVHLightSampler> {

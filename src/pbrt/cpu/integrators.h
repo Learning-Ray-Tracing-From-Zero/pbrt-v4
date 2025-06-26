@@ -125,6 +125,7 @@ class RandomWalkIntegrator : public RayIntegrator {
 
     std::string ToString() const;
 
+    // Used to activate recursion
     SampledSpectrum Li(RayDifferential ray, SampledWavelengths &lambda, Sampler sampler,
                        ScratchBuffer &scratchBuffer,
                        VisibleSurface *visibleSurface) const {
@@ -186,6 +187,8 @@ class SimplePathIntegrator : public RayIntegrator {
     SimplePathIntegrator(int maxDepth, bool sampleLights, bool sampleBSDF, Camera camera,
                          Sampler sampler, Primitive aggregate, std::vector<Light> lights);
 
+    // Does not provide the ability to initialize 'VisibleSurface' at the first intersection point,
+    //   therefore ignores the corresponding parameters
     SampledSpectrum Li(RayDifferential ray, SampledWavelengths &lambda, Sampler sampler,
                        ScratchBuffer &scratchBuffer,
                        VisibleSurface *visibleSurface) const;
@@ -199,7 +202,8 @@ class SimplePathIntegrator : public RayIntegrator {
   private:
     // SimplePathIntegrator Private Members
     int maxDepth;
-    bool sampleLights, sampleBSDF;
+    bool sampleLights; // deciding whether to directly sample the light source
+    bool sampleBSDF; // deciding whether to sample BSDF
     UniformLightSampler lightSampler;
 };
 

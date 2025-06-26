@@ -25,7 +25,11 @@
 namespace pbrt {
 
 // PixelFormat Definition
-enum class PixelFormat { U256, Half, Float };
+enum class PixelFormat {
+    U256, // 8 bit
+    Half, // 16 bit
+    Float // 32 bit
+};
 
 // PixelFormat Inline Functions
 PBRT_CPU_GPU inline bool Is8Bit(PixelFormat format) {

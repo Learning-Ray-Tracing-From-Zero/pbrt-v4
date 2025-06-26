@@ -96,6 +96,8 @@ void ImageTileIntegrator::Render() {
     });
 
     // Declare common variables for rendering image in tiles
+
+    // Create a separate 'ScratchBuffer' for each thread using the 'ThreadLocal' template class
     ThreadLocal<ScratchBuffer> scratchBuffers([]() { return ScratchBuffer(); });
 
     ThreadLocal<Sampler> samplers([this]() { return samplerPrototype.Clone(); });
@@ -227,10 +229,10 @@ void ImageTileIntegrator::Render() {
 void RayIntegrator::EvaluatePixelSample(Point2i pPixel, int sampleIndex, Sampler sampler,
                                         ScratchBuffer &scratchBuffer) {
     // Sample wavelengths for the ray
-    Float lu = sampler.Get1D();
+    Float lu = sampler.Get1D(); // [0.0, 1.0]
     if (Options->disableWavelengthJitter)
         lu = 0.5;
-    SampledWavelengths lambda = camera.GetFilm().SampleWavelengths(lu);
+    SampledWavelengths lambda = camera.GetFilm().SampleWavelengths(lu); // default sampling 4 times
 
     // Initialize _CameraSample_ for current sample
     Filter filter = camera.GetFilm().GetFilter();
@@ -391,8 +393,11 @@ SampledSpectrum SimplePathIntegrator::Li(RayDifferential ray, SampledWavelengths
                                          VisibleSurface *) const {
     // Estimate radiance along ray using simple path tracing
     SampledSpectrum L(0.f), beta(1.f);
+    // Record whether the last direction of ray emission was caused by specular reflection
     bool specularBounce = true;
     int depth = 0;
+
+    // Compute a path segment for each iteration
     while (beta) {
         // Find next _SimplePathIntegrator_ vertex and accumulate contribution
         // Intersect _ray_ with scene

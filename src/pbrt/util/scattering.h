@@ -122,6 +122,7 @@ class TrowbridgeReitzDistribution {
         }
     }
 
+    // Normal Distribution Dunction
     PBRT_CPU_GPU inline Float D(Vector3f wm) const {
         Float tan2Theta = Tan2Theta(wm);
         if (IsInf(tan2Theta))
@@ -133,6 +134,9 @@ class TrowbridgeReitzDistribution {
         return 1 / (Pi * alpha_x * alpha_y * cos4Theta * Sqr(1 + e));
     }
 
+    // Determine whether it is absolutely smooth
+    // When the roughness is very low,
+    //   treat it directly as smooth to avoid numerical problems
     PBRT_CPU_GPU
     bool EffectivelySmooth() const { return std::max(alpha_x, alpha_y) < 1e-3f; }
 

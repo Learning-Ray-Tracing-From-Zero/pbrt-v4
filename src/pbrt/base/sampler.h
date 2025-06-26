@@ -19,7 +19,7 @@ namespace pbrt {
 struct CameraSample {
     Point2f pFilm;
     Point2f pLens;
-    Float time = 0;
+    Float time = 0; // time of light sampling scene
     Float filterWeight = 1;
     std::string ToString() const;
 };

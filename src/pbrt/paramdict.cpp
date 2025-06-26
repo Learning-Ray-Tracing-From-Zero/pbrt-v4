@@ -441,7 +441,7 @@ std::vector<Spectrum> ParameterDictionary::extractSpectrumArray(
         return returnArray<Spectrum>(
             param.strings, param, 1,
             [param, &alloc](const std::string *s, const FileLoc *loc) -> Spectrum {
-                Spectrum spd = GetNamedSpectrum(*s);
+                Spectrum spd = GetNamedSpectrum(*s); // return normalized D65
                 if (spd)
                     return spd;
 

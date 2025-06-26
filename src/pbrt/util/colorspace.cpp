@@ -34,6 +34,7 @@ RGBColorSpace::RGBColorSpace(Point2f r, Point2f g, Point2f b, Spectrum illuminan
     RGBFromXYZ = InvertOrExit(XYZFromRGB);
 }
 
+// Calculate the transformation matrix from one color space to another color space
 SquareMatrix<3> ConvertRGBColorSpace(const RGBColorSpace &from, const RGBColorSpace &to) {
     if (from == to)
         return {};

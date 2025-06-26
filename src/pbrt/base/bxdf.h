@@ -50,7 +50,7 @@ enum BxDFFlags {
     Reflection = 1 << 0,
     Transmission = 1 << 1,
     Diffuse = 1 << 2,
-    Glossy = 1 << 3,
+    Glossy = 1 << 3, // also used for retroreflection
     Specular = 1 << 4,
     // Composite _BxDFFlags_ definitions
     DiffuseReflection = Diffuse | Reflection,
@@ -145,7 +145,7 @@ struct BSDFSample {
     std::string ToString() const;
     SampledSpectrum f;
     Vector3f wi;
-    Float pdf = 0;
+    Float pdf = 0; // solid angle sampling
     BxDFFlags flags;
     Float eta = 1;
     bool pdfIsProportional = false;
@@ -162,6 +162,7 @@ class NormalizedFresnelBxDF;
 class CoatedDiffuseBxDF;
 class CoatedConductorBxDF;
 
+// Modeling surface scattering
 // BxDF Definition
 class BxDF
     : public TaggedPointer<DiffuseTransmissionBxDF, DiffuseBxDF, CoatedDiffuseBxDF,

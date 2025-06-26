@@ -32,6 +32,8 @@ class Interaction {
     Interaction(Point3fi pi, Normal3f n, Point2f uv, Vector3f wo, Float time)
         : pi(pi), n(n), uv(uv), wo(Normalize(wo)), time(time) {}
 
+    // Without the need for error management,
+    //   directly return to the normal intersection point
     PBRT_CPU_GPU
     Point3f p() const { return Point3f(pi); }
 
@@ -128,11 +130,11 @@ class Interaction {
     }
 
     // Interaction Public Members
-    Point3fi pi;
+    Point3fi pi; // store a small floating-point value interval for error management
     Float time = 0;
-    Vector3f wo;
-    Normal3f n;
-    Point2f uv;
+    Vector3f wo; // -ray.d
+    Normal3f n; // normal
+    Point2f uv; // texture coordinates
     const MediumInterface *mediumInterface = nullptr;
     Medium medium = nullptr;
 };
@@ -190,6 +192,7 @@ class SurfaceInteraction : public Interaction {
         this->faceIndex = faceIndex;
     }
 
+    // When calculating the shading coordinate system, update 'SurfaceInteraction'
     PBRT_CPU_GPU
     void SetShadingGeometry(Normal3f ns, Vector3f dpdus, Vector3f dpdvs, Normal3f dndus,
                             Normal3f dndvs, bool orientationIsAuthoritative) {
@@ -249,13 +252,13 @@ class SurfaceInteraction : public Interaction {
     SampledSpectrum Le(Vector3f w, const SampledWavelengths &lambda) const;
 
     // SurfaceInteraction Public Members
-    Vector3f dpdu, dpdv;
-    Normal3f dndu, dndv;
+    Vector3f dpdu, dpdv; // the partial derivative of the intersection point
+    Normal3f dndu, dndv; // the partial derivative of the normal
     struct {
         Normal3f n;
         Vector3f dpdu, dpdv;
         Normal3f dndu, dndv;
-    } shading;
+    } shading; // the second instance represents the disturbance of the relevant quantity
     int faceIndex = 0;
     Material material;
     Light areaLight;

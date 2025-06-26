@@ -43,6 +43,8 @@ class Camera : public TaggedPointer<PerspectiveCamera, OrthographicCamera,
 
     std::string ToString() const;
 
+    // Calculate the corresponding rays based on the sampling points on the given image
+    // The parameter 'lambda' does not have a 'const&' because the camera may be used to model dispersion
     PBRT_CPU_GPU inline pstd::optional<CameraRay> GenerateRay(
         CameraSample sample, SampledWavelengths &lambda) const;
 
@@ -54,6 +56,7 @@ class Camera : public TaggedPointer<PerspectiveCamera, OrthographicCamera,
 
     PBRT_CPU_GPU inline Float SampleTime(Float u) const;
 
+    // Allow cameras to set fields in the 'ImageMetadata' class to specify camera related transformation matrices
     void InitMetadata(ImageMetadata *metadata) const;
 
     PBRT_CPU_GPU inline const CameraTransform &GetCameraTransform() const;

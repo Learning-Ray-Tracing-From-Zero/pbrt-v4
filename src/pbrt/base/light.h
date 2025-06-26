@@ -18,7 +18,13 @@
 namespace pbrt {
 
 // LightType Definition
-enum class LightType { DeltaPosition, DeltaDirection, Area, Infinite };
+// 'Delta' refers to the use of 'Dirac distribution'
+enum class LightType {
+    DeltaPosition,
+    DeltaDirection,
+    Area,
+    Infinite
+};
 
 class PointLight;
 class DistantLight;
@@ -57,10 +63,13 @@ class Light : public TaggedPointer<  // Light Source Types
                             const MediumInterface &mediumInterface, const Shape shape,
                             FloatTexture alpha, const FileLoc *loc, Allocator alloc);
 
+    // Return the total power of the lights
     SampledSpectrum Phi(SampledWavelengths lambda) const;
 
     PBRT_CPU_GPU inline LightType Type() const;
 
+    // allowIncompletePDF
+    //   when sampling lighting, decide whether to skip directions with smaller contributions
     PBRT_CPU_GPU inline pstd::optional<LightLiSample> SampleLi(
         LightSampleContext ctx, Point2f u, SampledWavelengths lambda,
         bool allowIncompletePDF = false) const;
@@ -71,6 +80,8 @@ class Light : public TaggedPointer<  // Light Source Types
     std::string ToString() const;
 
     // AreaLights only
+    // When light intersects with a surface light source,
+    //   it returns the radiation along the light
     PBRT_CPU_GPU inline SampledSpectrum L(Point3f p, Normal3f n, Point2f uv, Vector3f w,
                                           const SampledWavelengths &lambda) const;
 
@@ -78,6 +89,7 @@ class Light : public TaggedPointer<  // Light Source Types
     PBRT_CPU_GPU inline SampledSpectrum Le(const Ray &ray,
                                            const SampledWavelengths &lambda) const;
 
+    // Called before starting rendering
     void Preprocess(const Bounds3f &sceneBounds);
 
     pstd::optional<LightBounds> Bounds() const;

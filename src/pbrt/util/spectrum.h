@@ -31,10 +31,12 @@
 namespace pbrt {
 
 // Spectrum Constants
+// The physical unit is nanometer
 constexpr Float Lambda_min = 360, Lambda_max = 830;
 
 static constexpr int NSpectrumSamples = 4;
 
+// Integral value of Y(lambda) in CIE XYZ
 static constexpr Float CIE_Y_integral = 106.856895;
 
 // Spectrum Definition
@@ -55,6 +57,8 @@ class Spectrum : public TaggedPointer<ConstantSpectrum, DenselySampledSpectrum,
     using TaggedPointer::TaggedPointer;
     std::string ToString() const;
 
+    // lambda: wavelength
+    // return: the spectral distribution value of the wavelength
     PBRT_CPU_GPU
     Float operator()(Float lambda) const;
 
@@ -762,6 +766,7 @@ PBRT_CPU_GPU inline const DenselySampledSpectrum &Z();
 }  // namespace Spectra
 
 // Spectrum Inline Functions
+// Calculate the integral of the spectrum and CIE-Y matching function (Riemann sum)
 PBRT_CPU_GPU inline Float InnerProduct(Spectrum f, Spectrum g) {
     Float integral = 0;
     for (Float lambda = Lambda_min; lambda <= Lambda_max; ++lambda)

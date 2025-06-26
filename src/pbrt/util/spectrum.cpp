@@ -208,6 +208,7 @@ PBRT_CPU_GPU XYZ SampledSpectrum::ToXYZ(const SampledWavelengths &lambda) const 
     SampledSpectrum Y = Spectra::Y().Sample(lambda);
     SampledSpectrum Z = Spectra::Z().Sample(lambda);
 
+    // Monte Carlo integration
     // Evaluate estimator to compute $(x,y,z)$ coefficients
     SampledSpectrum pdf = lambda.PDF();
     return XYZ(SafeDiv(X * *this, pdf).Average(), SafeDiv(Y * *this, pdf).Average(),
@@ -590,6 +591,7 @@ const Float CIE_lambda[nCIESamples] = {
     802, 803, 804, 805, 806, 807, 808, 809, 810, 811, 812, 813, 814, 815, 816, 817, 818,
     819, 820, 821, 822, 823, 824, 825, 826, 827, 828, 829, 830};
 
+// Relative Spectral Energy Distribution of CIE Standard Illuminator A
 const Float CIE_Illum_A[] = {
     300.000000, 0.930483,   305.000000, 1.128210,   310.000000, 1.357690,   315.000000,
     1.622190,   320.000000, 1.925080,   325.000000, 2.269800,   330.000000, 2.659810,
@@ -763,6 +765,9 @@ const Float ACES_Illum_D60[] = {
     825, 62.2491,  830, 63.7793,
 };
 
+// Relative Spectral Energy Distribution of CIE Standard Illuminator D65
+// Sampling every 5nm, a total of 107 samples
+// http://shanghaijifa.com/uploadfile/file/20190731/1564556542115144.pdf
 const Float CIE_Illum_D6500[] = {
     300.000000, 0.034100,   305.000000, 1.664300,   310.000000, 3.294500,   315.000000,
     11.765200,  320.000000, 20.236000,  325.000000, 28.644699,  330.000000, 37.053501,

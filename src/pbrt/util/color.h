@@ -337,6 +337,7 @@ class RGBSigmoidPolynomial {
     RGBSigmoidPolynomial(Float c0, Float c1, Float c2) : c0(c0), c1(c1), c2(c2) {}
     std::string ToString() const;
 
+    // lambda => c0 * lambda^2 + c1 * lambda + c2
     PBRT_CPU_GPU
     Float operator()(Float lambda) const {
         return s(EvaluatePolynomial(lambda, c2, c1, c0));

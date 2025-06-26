@@ -16,6 +16,7 @@
 namespace pbrt {
 
 // BSDF Definition
+// Encapsulation of 'BxDF' and recording of local geometric characteristics at intersection point
 class BSDF {
   public:
     // BSDF Public Methods
