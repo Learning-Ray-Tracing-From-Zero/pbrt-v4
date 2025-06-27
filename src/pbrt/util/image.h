@@ -149,7 +149,9 @@ PBRT_CPU_GPU inline bool RemapPixelCoords(Point2i *pp, Point2i resolution,
     return true;
 }
 
-// ImageMetadata Definition
+
+// Some image formats can store additional data beyond pixel values
+// For example, OpenEXR
 struct ImageMetadata {
     // ImageMetadata Public Methods
     const RGBColorSpace *GetColorSpace() const;
@@ -216,7 +218,10 @@ struct ImageChannelValues : public InlinedVector<Float, 4> {
     std::string ToString() const;
 };
 
-// Image Definition
+
+// A 2D array that stores pixel values,
+//   where each pixel stores a fixed number of scalar value channels
+// For example, storing RGB format images has three channels
 class Image {
   public:
     // Image Public Methods
@@ -249,12 +254,18 @@ class Image {
     PBRT_CPU_GPU
     operator bool() const { return resolution.x > 0 && resolution.y > 0; }
 
+    // The color values are arranged in the array in channel order
+    // Return the position of the first channel of the pixel in the array
     PBRT_CPU_GPU
     size_t PixelOffset(Point2i p) const {
         DCHECK(InsideExclusive(p, Bounds2i({0, 0}, resolution)));
+        // The top left corner of the image is (0, 0)
         return NChannels() * (p.y * resolution.x + p.x);
     }
 
+    // Returns the floating-point value of a single image channel,
+    //   while also responsible for addressing pixels and
+    //   converting values in memory to floating-point values
     PBRT_CPU_GPU
     Float GetChannel(Point2i p, int c, WrapMode2D wrapMode = WrapMode::Clamp) const {
         // Remap provided pixel coordinates before reading channel
@@ -343,9 +354,15 @@ class Image {
         return GetSamplingDistribution([](Point2f) { return Float(1); });
     }
 
+    // When reading an image, if there is an error,
+    //   it will issue an error message and exit immediately,
+    //   so there is no need for the caller to handle the error
     static ImageAndMetadata Read(std::string filename, Allocator alloc = {},
                                  ColorEncoding encoding = nullptr);
 
+    // Write the image in one of the supported formats based on the file extension passed to it
+    // According to the image format used,
+    //   it stores as much metadata as possible
     bool Write(std::string name, const ImageMetadata &metadata = {}) const;
 
     Image ConvertToFormat(PixelFormat format, ColorEncoding encoding = nullptr) const;
@@ -420,6 +437,8 @@ class Image {
     Point2i resolution;
     pstd::vector<std::string> channelNames;
     ColorEncoding encoding = nullptr;
+
+    // Specify which storage pixel value to use by 'format'
     pstd::vector<uint8_t> p8;
     pstd::vector<Half> p16;
     pstd::vector<float> p32;

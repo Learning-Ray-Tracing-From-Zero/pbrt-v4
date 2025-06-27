@@ -52,6 +52,7 @@ static constexpr float OneMinusEpsilon = FloatOneMinusEpsilon;
 
 #endif  // PBRT_IS_GPU_CODE
 
+// TODO: C++23 require
 // Floating-point Inline Functions
 template <typename T>
 inline PBRT_CPU_GPU typename std::enable_if_t<std::is_floating_point_v<T>, bool> IsNaN(

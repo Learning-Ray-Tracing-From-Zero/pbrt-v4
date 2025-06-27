@@ -32,7 +32,9 @@
 
 namespace pbrt {
 
-// PixelSensor Definition
+// Exposure controls
+// RGB response
+// White balance
 class PixelSensor {
   public:
     // PixelSensor Public Methods

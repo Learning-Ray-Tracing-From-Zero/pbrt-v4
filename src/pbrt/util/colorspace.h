@@ -1,4 +1,4 @@
-// pbrt is Copyright(c) 1998-2020 Matt Pharr, Wenzel Jakob, and Greg Humphreys.
+c// pbrt is Copyright(c) 1998-2020 Matt Pharr, Wenzel Jakob, and Greg Humphreys.
 // The pbrt source code is licensed under the Apache License, Version 2.0.
 // SPDX: Apache-2.0
 
@@ -16,7 +16,17 @@
 
 namespace pbrt {
 
-// RGBColorSpace Definition
+// Defining a color space does not require a complete spectral response curve
+// For example,
+//   chromaticity coordinates can be used to define a color space to specify three colors as base colors,
+//   from which a matrix can be derived to convert XYZ colors to this color space
+
+
+// The RGB color space is defined using the chromaticity of the primary colors of red, green, and blue
+// These base colors define the color gamut of the color space,
+//   which can be represented by RGB values ranging from 0 to 1 to represent a set of colors
+// The color gamut of these three primary colors forms a triangle on the chromaticity diagram,
+//   with each primary color's chromaticity defining a vertex
 class RGBColorSpace {
   public:
     // RGBColorSpace Public Methods
