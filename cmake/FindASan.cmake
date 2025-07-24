@@ -25,6 +25,9 @@
 option(SANITIZE_ADDRESS "Enable AddressSanitizer for sanitized targets." Off)
 
 set(FLAG_CANDIDATES
+    # MSVC uses
+    "/fsanitize=address"
+
     # Clang 3.2+ use this version. The no-omit-frame-pointer option is optional.
     "-g -fsanitize=address -fno-omit-frame-pointer"
     "-g -fsanitize=address"
@@ -55,5 +58,5 @@ function (add_sanitize_address TARGET)
         return()
     endif ()
 
-    saitizer_add_flags(${TARGET} "AddressSanitizer" "ASan")
+    sanitizer_add_flags(${TARGET} "AddressSanitizer" "ASan")
 endfunction ()

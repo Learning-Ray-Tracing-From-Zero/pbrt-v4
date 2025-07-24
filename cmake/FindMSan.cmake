@@ -25,6 +25,9 @@
 option(SANITIZE_MEMORY "Enable MemorySanitizer for sanitized targets." Off)
 
 set(FLAG_CANDIDATES
+    # MSVC uses
+    "/fsanitize=memory"
+    # GNU/Clang
     "-g -fsanitize=memory"
 )
 
@@ -53,5 +56,5 @@ function (add_sanitize_memory TARGET)
         return()
     endif ()
 
-    saitizer_add_flags(${TARGET} "MemorySanitizer" "MSan")
+    sanitizer_add_flags(${TARGET} "MemorySanitizer" "MSan")
 endfunction ()

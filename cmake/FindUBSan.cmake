@@ -26,6 +26,9 @@ option(SANITIZE_UNDEFINED
     "Enable UndefinedBehaviorSanitizer for sanitized targets." Off)
 
 set(FLAG_CANDIDATES
+    # MSVC uses
+    "/fsanitize=undefined"
+    # GNU/Clang
     "-g -fsanitize=undefined"
 )
 
@@ -42,5 +45,5 @@ function (add_sanitize_undefined TARGET)
         return()
     endif ()
 
-    saitizer_add_flags(${TARGET} "UndefinedBehaviorSanitizer" "UBSan")
+    sanitizer_add_flags(${TARGET} "UndefinedBehaviorSanitizer" "UBSan")
 endfunction ()

@@ -1,129 +1,105 @@
+include(${CMAKE_SOURCE_DIR}/cmake/check_ext.cmake)
 
-cmake_minimum_required (VERSION 3.12)
 
-if (MSVC)
-  add_definitions(/D _CRT_SECURE_NO_WARNINGS /Dstrdup=_strdup
-    /wd4018 /wd4100 /wd4101 /wd4127 /wd4146 /wd4232 /wd4242 /wd4244 /wd4245 /wd4267 /wd4305 /wd4309
-    /wd4310 /wd4334 /wd4456 /wd4464 /wd4668 /wd4701 /wd4703 /wd4711 /wd4756 /wd4820 /wd5045 /wd5250)
-endif ()
-
-###########################################################################
-# stb
-
-set (STB_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/stb PARENT_SCOPE)
-
-###########################################################################
-# filesystem
-
-set (FILESYSTEM_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/filesystem PARENT_SCOPE)
-
-###########################################################################
-# libdeflate
-
-add_subdirectory (libdeflate)
-
-set (LIBDEFLATE_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/libdeflate PARENT_SCOPE)
-set (LIBDEFLATE_LIBRARIES deflate::deflate PARENT_SCOPE)
-
-set_property (TARGET deflate PROPERTY FOLDER "ext")
-
-###########################################################################
 # zlib
+set(ZLIB_BUILD_TESTING OFF CACHE BOOL "Enable Zlib Examples as tests" FORCE)
+set(ZLIB_BUILD_SHARED OFF CACHE BOOL "Enable building zlib shared library" FORCE)
+set(ZLIB_BUILD_STATIC ON CACHE BOOL "Enable building zlib static library" FORCE)
+set(ZLIB_BUILD_MINIZIP OFF CACHE BOOL "Enable building libminizip contrib library" FORCE)
+set(ZLIB_INSTALL OFF CACHE BOOL "Enable installation of zlib" FORCE)
+set(ZLIB_PREFIX OFF CACHE BOOL "prefix for all types and library functions, see zconf.h.in" FORCE)
+add_subdirectory(zlib)
 
-find_package (ZLIB)
-if (NOT ZLIB_FOUND)
-  # Build zlib
-  set (ZLIB_BUILD_STATIC_LIBS ON CACHE BOOL " " FORCE)
-  set (ZLIB_BUILD_SHARED_LIBS OFF CACHE BOOL " " FORCE)
-  add_subdirectory (zlib)
+# set(ZLIB_LIBRARIES zlibstatic)
+# set(ZLIB_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/zlib ${CMAKE_CURRENT_BINARY_DIR}/zlib)
 
-  set (ZLIB_LIBRARIES zlibstatic)
-  set (ZLIB_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/zlib ${CMAKE_CURRENT_BINARY_DIR}/zlib)
+# try to make openexr happy about this...
+# set(ZLIB_LIBRARY zlibstatic)
+# set(ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib ${CMAKE_CURRENT_BINARY_DIR}/zlib)
+# set(ZLIB_FOUND TRUE)
 
-  # try to make openexr happy about this...
-  set (ZLIB_LIBRARY zlibstatic)
-  set (ZLIB_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib ${CMAKE_CURRENT_BINARY_DIR}/zlib)
-  set (ZLIB_FOUND TRUE)
+# set_property(TARGET ZLIB::ZLIBSTATIC PROPERTY FOLDER "ext")
 
-  set_property (TARGET zlibstatic PROPERTY FOLDER "ext")
+# add_library (ZLIB::ZLIB ALIAS zlibstatic)
+# include_directories(${ZLIB_INCLUDE_DIRS})  # yuck, but so openexr/ptex can find zlib.h...
+# set(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS} PARENT_SCOPE)
+# set(ZLIB_LIBRARIES ${ZLIB_LIBARIES} PARENT_SCOPE)
 
-  add_library (ZLIB::ZLIB ALIAS zlibstatic)
-  include_directories(${ZLIB_INCLUDE_DIRS})  # yuck, but so openexr/ptex can find zlib.h...
-endif ()
 
-set (ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS} PARENT_SCOPE)
-set (ZLIB_LIBRARIES ${ZLIB_LIBARIES} PARENT_SCOPE)
+# # libdeflate
+# add_subdirectory(libdeflate)
+# set(LIBDEFLATE_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/libdeflate PARENT_SCOPE)
+# set(LIBDEFLATE_LIBRARIES deflate::deflate PARENT_SCOPE)
+# set_property(TARGET deflate PROPERTY FOLDER "ext")
 
-###########################################################################
-# openexr
 
-find_package(OpenEXR)
+# # stb
+# set(STB_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/stb PARENT_SCOPE)
 
-###########################################################################
-# ptex
 
-set (PTEX_BUILD_SHARED_LIBS OFF CACHE BOOL " " FORCE)
+# # filesystem
+# set(FILESYSTEM_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/filesystem PARENT_SCOPE)
 
-set (CMAKE_MACOSX_RPATH 1)
-if (WIN32)
-  add_definitions (/DPTEX_STATIC)
-endif ()
 
-add_subdirectory (ptex)
+# # ptex
+# set(PTEX_BUILD_SHARED_LIBS OFF CACHE BOOL " " FORCE)
+# set(CMAKE_MACOSX_RPATH 1)
+# if(WIN32)
+#     add_definitions (/DPTEX_STATIC)
+# endif()
 
-set_property (TARGET Ptex_static ptxinfo halftest ftest rtest wtest PROPERTY FOLDER "ext/ptex")
+# add_subdirectory(ptex)
+# set_property(TARGET Ptex_static ptxinfo halftest ftest rtest wtest PROPERTY FOLDER "ext/ptex")
+# set(PTEX_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/ptex/src/ptex PARENT_SCOPE)
 
-set (PTEX_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/ptex/src/ptex PARENT_SCOPE)
 
-###########################################################################
-# double-conversion
+# # double-conversion
+# add_subdirectory(double-conversion)
+# set(DOUBLE_CONVERSION_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/double-conversion PARENT_SCOPE)
+# set_property(TARGET double-conversion cctest PROPERTY FOLDER "ext")
 
-add_subdirectory (double-conversion)
 
-set (DOUBLE_CONVERSION_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/double-conversion PARENT_SCOPE)
+# # nanovdb
+# set(NANOVDB_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/openvdb/nanovdb PARENT_SCOPE)
 
-set_property (TARGET double-conversion cctest PROPERTY FOLDER "ext")
 
-###########################################################################
-# nanovdb
+# # FLIP
+# set(FLIP_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/flip PARENT_SCOPE)
+# add_library (flip_lib STATIC ${CMAKE_CURRENT_SOURCE_DIR}/flip/flip.cpp)
+# set_property(TARGET flip_lib PROPERTY FOLDER "ext")
 
-set (NANOVDB_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/openvdb/nanovdb PARENT_SCOPE)
 
-###########################################################################
-# FLIP
+# # utf8proc
+# set(UTF8PROC_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/utf8proc PARENT_SCOPE)
+# add_subdirectory(utf8proc)
 
-set (FLIP_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/flip PARENT_SCOPE)
 
-add_library (flip_lib STATIC ${CMAKE_CURRENT_SOURCE_DIR}/flip/flip.cpp)
+# # qoi
+# set(QOI_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/qoi PARENT_SCOPE)
 
-set_property (TARGET flip_lib PROPERTY FOLDER "ext")
 
-###########################################################################
-# utf8proc
+# # glfw
+# set(GLFW_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/glfw/include PARENT_SCOPE)
+# set(GLFW_LIBRARY_TYPE STATIC CACHE STRING "" FORCE)
+# set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+# set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+# set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+# add_subdirectory(glfw)
+# set_property(TARGET glfw PROPERTY FOLDER "ext")
 
-set (UTF8PROC_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/utf8proc PARENT_SCOPE)
 
-add_subdirectory (utf8proc)
+# # glad
+# set(GLAD_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/glad/include PARENT_SCOPE)
+# add_subdirectory(glad)
+# set_property(TARGET glad PROPERTY FOLDER "ext")
 
-###########################################################################
-# qoi
 
-set (QOI_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/qoi PARENT_SCOPE)
-
-###########################################################################
-# glfw / glad
-
-set (GLFW_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/glfw/include PARENT_SCOPE)
-set (GLAD_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/glad/include PARENT_SCOPE)
-
-set (GLFW_LIBRARY_TYPE STATIC CACHE STRING "" FORCE)
-set (GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set (GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set (GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-
-add_subdirectory (glfw)
-add_subdirectory (glad)
-
-set_property (TARGET glfw PROPERTY FOLDER "ext")
-set_property (TARGET glad PROPERTY FOLDER "ext")
-
+# # OpenEXR
+# find_package(OpenEXR)
+# if(OPENEXR_FOUND)
+#     message(STATUS "Found OpenEXR version ${OPENEXR_VERSION}")
+# else ()
+#     message(STATUS "OpenEXR not found, building it from scratch.")
+#     add_subdirectory(openexr)
+#     set_property(TARGET IlmThread Iex OpenEXR PROPERTY FOLDER "ext/OpenEXR")
+# endif()

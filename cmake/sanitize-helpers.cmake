@@ -24,7 +24,14 @@
 
 # Helper function to get the language of a source file.
 function (sanitizer_lang_of_source FILE RETURN_VAR)
-    get_filename_component(FILE_EXT "${FILE}" EXT)
+    get_filename_component(LONGEST_EXT "${FILE}" EXT)
+    # If extension is empty return. This can happen for extensionless headers
+    if("${LONGEST_EXT}" STREQUAL "")
+       set(${RETURN_VAR} "" PARENT_SCOPE)
+       return()
+    endif()
+    # Get shortest extension as some files can have dot in their names
+    string(REGEX REPLACE "^.*(\\.[^.]+)$" "\\1" FILE_EXT ${LONGEST_EXT})
     string(TOLOWER "${FILE_EXT}" FILE_EXT)
     string(SUBSTRING "${FILE_EXT}" 1 -1 FILE_EXT)
 
@@ -68,6 +75,7 @@ endfunction ()
 
 # Helper function to check compiler flags for language compiler.
 function (sanitizer_check_compiler_flag FLAG LANG VARIABLE)
+
     if (${LANG} STREQUAL "C")
         include(CheckCCompilerFlag)
         check_c_compiler_flag("${FLAG}" ${VARIABLE})
@@ -90,6 +98,7 @@ function (sanitizer_check_compiler_flag FLAG LANG VARIABLE)
                 " - Failed (Check not supported)")
         endif ()
     endif()
+
 endfunction ()
 
 
@@ -99,11 +108,11 @@ function (sanitizer_check_compiler_flags FLAG_CANDIDATES NAME PREFIX)
 
     get_property(ENABLED_LANGUAGES GLOBAL PROPERTY ENABLED_LANGUAGES)
     foreach (LANG ${ENABLED_LANGUAGES})
-        # Sanitizer flags are not dependent on language, but the used compiler.
+        # Sanitizer flags are not dependend on language, but the used compiler.
         # So instead of searching flags foreach language, search flags foreach
         # compiler used.
         set(COMPILER ${CMAKE_${LANG}_COMPILER_ID})
-        if (NOT DEFINED ${PREFIX}_${COMPILER}_FLAGS)
+        if (COMPILER AND NOT DEFINED ${PREFIX}_${COMPILER}_FLAGS)
             foreach (FLAG ${FLAG_CANDIDATES})
                 if(NOT CMAKE_REQUIRED_QUIET)
                     message(STATUS "Try ${COMPILER} ${NAME} flag = [${FLAG}]")
@@ -139,6 +148,10 @@ function (sanitizer_check_compiler_flags FLAG_CANDIDATES NAME PREFIX)
                 set(${PREFIX}_${COMPILER}_FLAGS "" CACHE STRING
                     "${NAME} flags for ${COMPILER} compiler.")
                 mark_as_advanced(${PREFIX}_${COMPILER}_FLAGS)
+
+                message(WARNING "${NAME} is not available for ${COMPILER} "
+                        "compiler. Targets using this compiler will be "
+                        "compiled without ${NAME}.")
             endif ()
         endif ()
     endforeach ()
@@ -146,28 +159,20 @@ endfunction ()
 
 
 # Helper to assign sanitizer flags for TARGET.
-function (saitizer_add_flags TARGET NAME PREFIX)
-    # Get list of compilers used by target and check, if target can be checked
-    # by sanitizer.
+function (sanitizer_add_flags TARGET NAME PREFIX)
+    # Get list of compilers used by target and check, if sanitizer is available
+    # for this target. Other compiler checks like check for conflicting
+    # compilers will be done in add_sanitizers function.
     sanitizer_target_compilers(${TARGET} TARGET_COMPILER)
     list(LENGTH TARGET_COMPILER NUM_COMPILERS)
-    if (NUM_COMPILERS GREATER 1)
-        message(WARNING "${NAME} disabled for target ${TARGET} because it will "
-            "be compiled by different compilers.")
-        return()
-
-    elseif ((NUM_COMPILERS EQUAL 0) OR
-        ("${${PREFIX}_${TARGET_COMPILER}_FLAGS}" STREQUAL ""))
-        message(WARNING "${NAME} disabled for target ${TARGET} because there is"
-            " no sanitizer available for target sources.")
+    if ("${${PREFIX}_${TARGET_COMPILER}_FLAGS}" STREQUAL "")
         return()
     endif()
 
-    # Set compile- and link-flags for target.
-    set_property(TARGET ${TARGET} APPEND_STRING
-        PROPERTY COMPILE_FLAGS " ${${PREFIX}_${TARGET_COMPILER}_FLAGS}")
-    set_property(TARGET ${TARGET} APPEND_STRING
-        PROPERTY COMPILE_FLAGS " ${SanBlist_${TARGET_COMPILER}_FLAGS}")
-    set_property(TARGET ${TARGET} APPEND_STRING
-        PROPERTY LINK_FLAGS " ${${PREFIX}_${TARGET_COMPILER}_FLAGS}")
+    separate_arguments(flags_list UNIX_COMMAND "${${PREFIX}_${TARGET_COMPILER}_FLAGS} ${SanBlist_${TARGET_COMPILER}_FLAGS}")
+    target_compile_options(${TARGET} PUBLIC ${flags_list})
+
+    separate_arguments(flags_list UNIX_COMMAND "${${PREFIX}_${TARGET_COMPILER}_FLAGS}")
+    target_link_options(${TARGET} PUBLIC ${flags_list})
+
 endfunction ()
