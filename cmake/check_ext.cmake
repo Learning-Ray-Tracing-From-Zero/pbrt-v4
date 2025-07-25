@@ -35,7 +35,6 @@ function(check_ext NAME DIR HASH)
 endfunction()
 
 check_ext("double-conversion" "double-conversion/cmake" cc1f75a114aca8d2af69f73a5a959aecbab0e87a)
-check_ext("filesystem" "filesystem/filesystem" c5f9de30142453eb3c6fe991e82dfc2583373116)
 check_ext("glfw" "glfw/docs" 7b6aead9fb88b3623e3b3725ebb42670cbe4c579)
 check_ext("libdeflate" "libdeflate/common" 1fd0bea6ca2073c68493632dafc4b1ddda1bcbc3)
 check_ext("lodepng" "lodepng/examples" 8c6a9e30576f07bf470ad6f09458a2dcd7a6a84a)

@@ -1,4 +1,4 @@
-include(${CMAKE_SOURCE_DIR}/cmake/check_ext.cmake)
+# include(${CMAKE_SOURCE_DIR}/cmake/check_ext.cmake)
 
 
 # zlib
