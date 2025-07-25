@@ -11,7 +11,7 @@
 
 #include <libdeflate.h>
 
-#include <filesystem/path.h>
+#include <filesystem>
 #include <algorithm>
 #include <cctype>
 #include <climits>
@@ -30,10 +30,10 @@
 
 namespace pbrt {
 
-static filesystem::path searchDirectory;
+static std::filesystem::path searchDirectory;
 
 void SetSearchDirectory(std::string filename) {
-    filesystem::path path(filename);
+    std::filesystem::path path(filename);
     if (!path.is_directory())
         path = path.parent_path();
     searchDirectory = path;
@@ -42,7 +42,7 @@ void SetSearchDirectory(std::string filename) {
 static bool IsAbsolutePath(std::string filename) {
     if (filename.empty())
         return false;
-    return filesystem::path(filename).is_absolute();
+    return std::filesystem::path(filename).is_absolute();
 }
 
 bool HasExtension(std::string filename, std::string e) {
@@ -50,7 +50,7 @@ bool HasExtension(std::string filename, std::string e) {
     if (!ext.empty() && ext[0] == '.')
         ext.erase(0, 1);
 
-    std::string filenameExtension = filesystem::path(filename).extension();
+    std::string filenameExtension = std::filesystem::path(filename).extension();
     if (ext.size() > filenameExtension.size())
         return false;
     return std::equal(ext.rbegin(), ext.rend(), filenameExtension.rbegin(),
@@ -58,7 +58,7 @@ bool HasExtension(std::string filename, std::string e) {
 }
 
 std::string RemoveExtension(std::string filename) {
-    std::string ext = filesystem::path(filename).extension();
+    std::string ext = std::filesystem::path(filename).extension();
     if (ext.empty())
         return filename;
     std::string f = filename;
@@ -70,7 +70,7 @@ std::string ResolveFilename(std::string filename) {
     if (searchDirectory.empty() || filename.empty() || IsAbsolutePath(filename))
         return filename;
 
-    filesystem::path filepath = searchDirectory / filesystem::path(filename);
+    std::filesystem::path filepath = searchDirectory / std::filesystem::path(filename);
     if (filepath.exists())
         return filepath.make_absolute().str();
     return filename;
@@ -79,7 +79,7 @@ std::string ResolveFilename(std::string filename) {
 std::vector<std::string> MatchingFilenames(std::string filenameBase) {
     std::vector<std::string> filenames;
 
-    filesystem::path basePath(filenameBase);
+    std::filesystem::path basePath(filenameBase);
     std::string dirStr = basePath.parent_path().str();
     if (dirStr.empty())
         dirStr = ".";
@@ -96,7 +96,7 @@ std::vector<std::string> MatchingFilenames(std::string filenameBase) {
         if (ent->d_type == DT_REG &&
             strncmp(basePath.filename().c_str(), ent->d_name, n) == 0)
             filenames.push_back(
-                (basePath.parent_path() / filesystem::path(ent->d_name)).str());
+                (basePath.parent_path() / std::filesystem::path(ent->d_name)).str());
     }
     closedir(dir);
 #endif
