@@ -19,7 +19,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 project(PBRT-V4 LANGUAGES C CXX)
 
-set(BUILD_SHARED_LIBS OFF)
+# set(BUILD_SHARED_LIBS OFF)
 set(PBRT_OPTIX7_PATH $ENV{PBRT_OPTIX7_PATH} CACHE PATH "Path to OptiX 7 SDK")
 set(PBRT_GPU_SHADER_MODEL "" CACHE STRING "")
 if(NOT DEFINED PBRT_SOURCE_CODE)
@@ -1020,16 +1020,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/ext)
 
 # set_property(TARGET nanovdb2pbrt PROPERTY FOLDER "cmd")
 
-# # Only do this if both targets actually exist
-# if(TARGET Ptex_static AND TARGET zlibstatic)
-#   install(
-#     TARGETS zlibstatic
-#     EXPORT Ptex             # Same export set name as used by Ptex
-#     RUNTIME DESTINATION bin
-#     LIBRARY DESTINATION lib
-#     ARCHIVE DESTINATION lib
-#   )
-# endif()
+
 
 
 # # cyhair2pbrt
