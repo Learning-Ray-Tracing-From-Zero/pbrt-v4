@@ -8,6 +8,8 @@
 #include <pbrt/pbrt.h>
 
 #include <string>
+#include <iostream>
+
 
 // Hack: make util/log.h happy
 namespace pbrt {
@@ -257,9 +259,10 @@ inline void stringPrintfRecursive(std::string *s, const char *fmt, T &&v,
         LOG_FATAL("Non-integral type passed to %d format.");
 
     if (isSFmt) {
-        std::stringstream ss;
-        ss << v;
-        *s += formatOne(nextFmt.c_str(), ss.str().c_str());
+        std::cout << "TODO" << '\n';
+        // std::stringstream ss;
+        // ss << v;
+        // *s += formatOne(nextFmt.c_str(), ss.str().c_str());
     } else if (!nextFmt.empty())
         *s += formatOne(nextFmt.c_str(), std::forward<T>(v));
     else

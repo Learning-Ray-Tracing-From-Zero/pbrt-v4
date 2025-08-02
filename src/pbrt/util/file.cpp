@@ -34,8 +34,7 @@ static std::filesystem::path searchDirectory;
 
 void SetSearchDirectory(std::string filename) {
     std::filesystem::path path(filename);
-    if (!path.is_directory())
-        path = path.parent_path();
+    if (!std::filesystem::is_directory(path)) { path = path.parent_path(); }
     searchDirectory = path;
 }
 
@@ -50,7 +49,7 @@ bool HasExtension(std::string filename, std::string e) {
     if (!ext.empty() && ext[0] == '.')
         ext.erase(0, 1);
 
-    std::string filenameExtension = std::filesystem::path(filename).extension();
+    std::string filenameExtension = std::filesystem::path(filename).extension().string();
     if (ext.size() > filenameExtension.size())
         return false;
     return std::equal(ext.rbegin(), ext.rend(), filenameExtension.rbegin(),
@@ -58,7 +57,7 @@ bool HasExtension(std::string filename, std::string e) {
 }
 
 std::string RemoveExtension(std::string filename) {
-    std::string ext = std::filesystem::path(filename).extension();
+    std::string ext = std::filesystem::path(filename).extension().string();
     if (ext.empty())
         return filename;
     std::string f = filename;
@@ -71,8 +70,7 @@ std::string ResolveFilename(std::string filename) {
         return filename;
 
     std::filesystem::path filepath = searchDirectory / std::filesystem::path(filename);
-    if (filepath.exists())
-        return filepath.make_absolute().str();
+    if (std::filesystem::exists(filepath)) { return std::filesystem::absolute(filepath).string(); }
     return filename;
 }
 
@@ -80,7 +78,7 @@ std::vector<std::string> MatchingFilenames(std::string filenameBase) {
     std::vector<std::string> filenames;
 
     std::filesystem::path basePath(filenameBase);
-    std::string dirStr = basePath.parent_path().str();
+    std::string dirStr = basePath.parent_path().string();
     if (dirStr.empty())
         dirStr = ".";
 #ifdef PBRT_IS_WINDOWS

@@ -75,7 +75,7 @@ if(WIN32)
 endif()
 add_subdirectory(ptex)
 set_property(TARGET Ptex_static Ptex_dynamic ptxinfo halftest ftest rtest wtest PROPERTY FOLDER "ext/ptex")
-# set(PTEX_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/ptex/src/ptex PARENT_SCOPE)
+set(PTEX_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/ptex/src/ptex PARENT_SCOPE)
 
 # Only do this if both targets actually exist
 if(TARGET Ptex_static AND TARGET zlibstatic)
@@ -92,7 +92,7 @@ endif()
 # double-conversion
 set(BUILD_TESTING OFF CACHE BOOL "Build test programs" FORCE)
 add_subdirectory(double-conversion)
-# set(DOUBLE_CONVERSION_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/double-conversion PARENT_SCOPE)
+set(DOUBLE_CONVERSION_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/double-conversion PARENT_SCOPE)
 set_property(TARGET double-conversion PROPERTY FOLDER "ext")
 
 
@@ -129,7 +129,7 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "Build the GLFW documentation" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
 add_subdirectory(glfw)
 set_property(TARGET glfw PROPERTY FOLDER "ext")
-# set(GLFW_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/glfw/include PARENT_SCOPE)
+set(GLFW_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/glfw/include PARENT_SCOPE)
 
 
 # glad

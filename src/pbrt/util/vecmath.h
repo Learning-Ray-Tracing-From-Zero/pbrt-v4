@@ -828,6 +828,7 @@ class Quaternion {
   public:
     // Quaternion Public Methods
     Quaternion() = default;
+    Quaternion(const Vector3f &v, Float w) : v(v), w(w) {}
 
     PBRT_CPU_GPU
     Quaternion &operator+=(Quaternion q) {
